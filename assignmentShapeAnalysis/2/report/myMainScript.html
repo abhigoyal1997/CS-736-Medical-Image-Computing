@@ -66,10 +66,10 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Loading and visualizing the data</a></li><li><a href="#2">Transformation to preshape space</a></li><li><a href="#3">Finding the mean shape by minimizing the L2-norm</a></li><li><a href="#4">Finding eigenvalues and eigenvectors</a></li><li><a href="#5">Visualizing modes of shape variation</a></li></ul></div><h2 id="1">Loading and visualizing the data</h2><pre class="codeinput">data = load(<span class="string">'../data/ellipses2D.mat'</span>);
-N = data.numOfPointSets;
-z = data.pointSets;
-n = data.numOfPoints;
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Loading and visualizing the data</a></li><li><a href="#2">Transformation to preshape space</a></li><li><a href="#3">Finding the mean shape by minimizing the L2-norm</a></li><li><a href="#4">Finding eigenvalues and eigenvectors</a></li><li><a href="#5">Visualizing modes of shape variation</a></li></ul></div><h2 id="1">Loading and visualizing the data</h2><pre class="codeinput">data = load(<span class="string">'../data/hands2D.mat'</span>);
+z = data.shapes;
+n = size(z,2);
+N = size(z,3);
 
 color = rand(N,3);
 
@@ -120,7 +120,7 @@ xlabel(<span class="string">'x'</span>);
 ylabel(<span class="string">'y'</span>);
 title(<span class="string">'Mean Pointset and Aligned Pointsets'</span>);
 legend(mean_plot, <span class="string">'Mean shape'</span>);
-</pre><pre class="codeoutput">Elapsed time is 0.017135 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.004215 seconds.
 </pre><img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="4">Finding eigenvalues and eigenvectors</h2><pre class="codeinput">zv = reshape(z,2*n,N); <span class="comment">% vectorisation</span>
 z_c = cov(zv'); <span class="comment">% covariance matrix</span>
 [V,D] = eig(z_c);
@@ -212,10 +212,10 @@ axis <span class="string">square</span>;
 ##### SOURCE BEGIN #####
 %% Loading and visualizing the data
 
-data = load('../data/ellipses2D.mat');
-N = data.numOfPointSets;
-z = data.pointSets;
-n = data.numOfPoints;
+data = load('../data/hands2D.mat');
+z = data.shapes;
+n = size(z,2);
+N = size(z,3);
 
 color = rand(N,3);
 

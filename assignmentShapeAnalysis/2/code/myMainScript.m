@@ -1,9 +1,9 @@
 %% Loading and visualizing the data
 
-data = load('../data/ellipses2D.mat');
-N = data.numOfPointSets;
-z = data.pointSets;
-n = data.numOfPoints;
+data = load('../data/hands2D.mat');
+z = data.shapes;
+n = size(z,2);
+N = size(z,3);
 
 color = rand(N,3);
 
