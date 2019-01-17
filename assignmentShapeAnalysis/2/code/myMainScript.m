@@ -76,15 +76,14 @@ ylabel('Eigenvalue');
 
 V = V(:,idx); % Re-arranging eigenvectors along sorted eigenvalues
 
-%% Visualizing modes of shape variation
+%% First principal mode of variation
 
-% First principal mode of variation
 z_pu = z_m + 2*sqrt(D_s(1))*reshape(V(:,1),2,n);
 z_pd = z_m - 2*sqrt(D_s(1))*reshape(V(:,1),2,n);
 
-figure;
+figure; set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.6, 0.4]);
 
-subplot(2,3,1); hold on;
+subplot(1,3,1); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -95,7 +94,7 @@ ylabel('y');
 title('-2{\surd}\lambda_{1}')
 axis square;
 
-subplot(2,3,2); hold on;
+subplot(1,3,2); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -106,7 +105,7 @@ ylabel('y');
 title('Mean shape')
 axis square;
 
-subplot(2,3,3); hold on;
+subplot(1,3,3); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -117,11 +116,16 @@ ylabel('y');
 title('+2{\surd}\lambda_{1}')
 axis square;
 
-% Second principal mode of variation
+suptitle('1st principal mode of variation');
+
+%% Second principal mode of variation
+
 z_pu = z_m + 2*sqrt(D_s(2))*reshape(V(:,2),2,n);
 z_pd = z_m - 2*sqrt(D_s(2))*reshape(V(:,2),2,n);
 
-subplot(2,3,4); hold on;
+figure; set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.6, 0.4]);
+
+subplot(1,3,1); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -132,7 +136,7 @@ ylabel('y');
 title('-2{\surd}\lambda_{2}')
 axis square;
 
-subplot(2,3,5); hold on;
+subplot(1,3,2); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -143,7 +147,7 @@ ylabel('y');
 title('Mean shape')
 axis square;
 
-subplot(2,3,6); hold on;
+subplot(1,3,3); hold on;
 for i=1:N
     scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
 end
@@ -154,3 +158,46 @@ ylabel('y');
 title('+2{\surd}\lambda_{2}')
 axis square;
 
+suptitle('2nd principal mode of variation');
+
+%% Third principal mode of variation
+
+z_pu = z_m + 2*sqrt(D_s(3))*reshape(V(:,3),2,n);
+z_pd = z_m - 2*sqrt(D_s(3))*reshape(V(:,3),2,n);
+
+figure; set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.6, 0.4]);
+
+subplot(1,3,1); hold on;
+for i=1:N
+    scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
+end
+plot(z_pu(1,:), z_pu(2,:), 'r-', 'LineWidth',1);
+hold off;
+xlabel('x');
+ylabel('y');
+title('-2{\surd}\lambda_{3}')
+axis square;
+
+subplot(1,3,2); hold on;
+for i=1:N
+    scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
+end
+plot(z_m(1,:), z_m(2,:), 'r-', 'LineWidth',1);
+hold off;
+xlabel('x');
+ylabel('y');
+title('Mean shape')
+axis square;
+
+subplot(1,3,3); hold on;
+for i=1:N
+    scatter(z(1,:,i), z(2,:,i), 5, color(i,:),'o');
+end
+plot(z_pd(1,:), z_pd(2,:), 'r-', 'LineWidth',1);
+hold off;
+xlabel('x');
+ylabel('y');
+title('+2{\surd}\lambda_{3}')
+axis square;
+
+suptitle('3rd principal mode of variation');
