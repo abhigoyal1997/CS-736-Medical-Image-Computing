@@ -1,0 +1,240 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-01-31"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Loading and Visualizing the images</a></li><li><a href="#2">MRF Potential: Quadratic</a></li><li><a href="#3">MRF Potential: Discontinuity-adaptive Huber</a></li><li><a href="#4">MRF Potential: Discontinuity-adaptive</a></li></ul></div><h2 id="1">Loading and Visualizing the images</h2><pre class="codeinput">data = load(<span class="string">'../data/assignmentImageDenoisingPhantom.mat'</span>);
+im = data.imageNoisy;
+im_orig = data.imageNoiseless;
+
+fprintf(<span class="string">'RRMSE = %f\n'</span>, rrmse(im,im_orig));
+
+printImage(im_orig,<span class="string">'Original Noiseless Image'</span>);
+printImage(abs(im),<span class="string">'Input Noisy Image'</span>);
+</pre><pre class="codeoutput">RRMSE = 0.282996
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <h2 id="2">MRF Potential: Quadratic</h2><pre class="codeinput">alphaOptimal = 0.215;
+[im_r_op, nllHistory] = denoise(im,<span class="string">'q'</span>,alphaOptimal);
+fprintf(<span class="string">'Optimal alpha=%f, RRMSE = %f\n\n'</span>, alphaOptimal, rrmse(im_orig, im_r_op));
+
+<span class="keyword">for</span> alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,<span class="string">'q'</span>,alpha);
+    fprintf(<span class="string">'RRMSE (alpha=%f) = %f\n'</span>, alpha, rrmse(im_orig, im_r));
+<span class="keyword">end</span>
+
+printImage(abs(im_r_op),<span class="string">'Denoised image using Quadratic prior potential'</span>);
+figure;
+plot(nllHistory);
+title(<span class="string">'nll function using Quadratic prior'</span>);
+xlabel(<span class="string">'Iteration number'</span>);
+ylabel(<span class="string">'nll'</span>);
+</pre><pre class="codeoutput">Optimal alpha=0.215000, RRMSE = 0.210079
+
+RRMSE (alpha=0.172000) = 0.212302
+RRMSE (alpha=0.258000) = 0.211556
+</pre><img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <h2 id="3">MRF Potential: Discontinuity-adaptive Huber</h2><pre class="codeinput">alphaOptimal = 0.78;
+gammaOptimal = 0.03;
+[im_r_op, nllHistory] = denoise(im,<span class="string">'h'</span>,alphaOptimal,gammaOptimal);
+fprintf(<span class="string">'Optimal alpha=%f, Optimal gamma=%f RRMSE = %f\n\n'</span>, alphaOptimal, gammaOptimal, rrmse(im_orig, im_r_op));
+
+<span class="keyword">for</span> alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,<span class="string">'h'</span>,alpha,gammaOptimal);
+    fprintf(<span class="string">'RRMSE (alpha=%f) = %f\n'</span>, alpha, rrmse(im_orig, im_r));
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\n'</span>);
+
+<span class="keyword">for</span> gamma=[0.8*gammaOptimal, 1.2*gammaOptimal]
+    [im_r, ~] = denoise(im,<span class="string">'h'</span>,alphaOptimal,gamma);
+    fprintf(<span class="string">'RRMSE (gamma=%f) = %f\n'</span>, gamma, rrmse(im_orig, im_r));
+<span class="keyword">end</span>
+
+printImage(abs(im_r_op),<span class="string">'Denoised image using Discontinuity-adaptive Huber prior potential'</span>);
+figure;
+plot(nllHistory);
+title(<span class="string">'nll function using Discontinuity-adaptive Huber prior'</span>);
+xlabel(<span class="string">'Iteration number'</span>);
+ylabel(<span class="string">'nll'</span>);
+</pre><pre class="codeoutput">Optimal alpha=0.780000, Optimal gamma=0.030000 RRMSE = 0.083690
+
+RRMSE (alpha=0.624000) = 0.130231
+RRMSE (alpha=0.936000) = 0.122246
+
+RRMSE (gamma=0.024000) = 0.084150
+RRMSE (gamma=0.036000) = 0.086803
+</pre><img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <h2 id="4">MRF Potential: Discontinuity-adaptive</h2><pre class="codeinput">alphaOptimal = 0.78;
+gammaOptimal = 0.04;
+[im_r_op, nllHistory] = denoise(im,<span class="string">'d'</span>,alphaOptimal,gammaOptimal);
+fprintf(<span class="string">'Optimal alpha=%f, Optimal gamma=%f RRMSE = %f\n\n'</span>, alphaOptimal, gammaOptimal, rrmse(im_orig, im_r_op));
+
+<span class="keyword">for</span> alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,<span class="string">'d'</span>,alpha,gammaOptimal);
+    fprintf(<span class="string">'RRMSE (alpha=%f) = %f\n'</span>, alpha, rrmse(im_orig, im_r));
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\n'</span>);
+
+<span class="keyword">for</span> gamma=[0.8*gammaOptimal, 1.2*gammaOptimal]
+    [im_r, ~] = denoise(im,<span class="string">'d'</span>,alphaOptimal,gamma);
+    fprintf(<span class="string">'RRMSE (gamma=%f) = %f\n'</span>, gamma, rrmse(im_orig, im_r));
+<span class="keyword">end</span>
+
+printImage(abs(im_r_op),<span class="string">'Denoised image using Discontinuity-adaptive prior potential'</span>);
+figure;
+plot(nllHistory);
+title(<span class="string">'nll function using Discontinuity-adaptive prior'</span>);
+xlabel(<span class="string">'Iteration number'</span>);
+ylabel(<span class="string">'nll'</span>);
+</pre><pre class="codeoutput">Optimal alpha=0.780000, Optimal gamma=0.040000 RRMSE = 0.109118
+
+RRMSE (alpha=0.624000) = 0.155749
+RRMSE (alpha=0.936000) = 0.165158
+
+RRMSE (gamma=0.032000) = 0.111237
+RRMSE (gamma=0.048000) = 0.110224
+</pre><img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Loading and Visualizing the images
+
+data = load('../data/assignmentImageDenoisingPhantom.mat');
+im = data.imageNoisy;
+im_orig = data.imageNoiseless;
+
+fprintf('RRMSE = %f\n', rrmse(im,im_orig));
+
+printImage(im_orig,'Original Noiseless Image');
+printImage(abs(im),'Input Noisy Image');
+
+%% MRF Potential: Quadratic
+
+alphaOptimal = 0.215;
+[im_r_op, nllHistory] = denoise(im,'q',alphaOptimal);
+fprintf('Optimal alpha=%f, RRMSE = %f\n\n', alphaOptimal, rrmse(im_orig, im_r_op));
+
+for alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,'q',alpha);
+    fprintf('RRMSE (alpha=%f) = %f\n', alpha, rrmse(im_orig, im_r));
+end
+
+printImage(abs(im_r_op),'Denoised image using Quadratic prior potential');
+figure;
+plot(nllHistory);
+title('nll function using Quadratic prior');
+xlabel('Iteration number');
+ylabel('nll');
+
+%% MRF Potential: Discontinuity-adaptive Huber
+
+alphaOptimal = 0.78;
+gammaOptimal = 0.03;
+[im_r_op, nllHistory] = denoise(im,'h',alphaOptimal,gammaOptimal);
+fprintf('Optimal alpha=%f, Optimal gamma=%f RRMSE = %f\n\n', alphaOptimal, gammaOptimal, rrmse(im_orig, im_r_op));
+
+for alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,'h',alpha,gammaOptimal);
+    fprintf('RRMSE (alpha=%f) = %f\n', alpha, rrmse(im_orig, im_r));
+end
+
+fprintf('\n');
+
+for gamma=[0.8*gammaOptimal, 1.2*gammaOptimal]
+    [im_r, ~] = denoise(im,'h',alphaOptimal,gamma);
+    fprintf('RRMSE (gamma=%f) = %f\n', gamma, rrmse(im_orig, im_r));
+end
+
+printImage(abs(im_r_op),'Denoised image using Discontinuity-adaptive Huber prior potential');
+figure;
+plot(nllHistory);
+title('nll function using Discontinuity-adaptive Huber prior');
+xlabel('Iteration number');
+ylabel('nll');
+
+%% MRF Potential: Discontinuity-adaptive
+
+alphaOptimal = 0.78;
+gammaOptimal = 0.04;
+[im_r_op, nllHistory] = denoise(im,'d',alphaOptimal,gammaOptimal);
+fprintf('Optimal alpha=%f, Optimal gamma=%f RRMSE = %f\n\n', alphaOptimal, gammaOptimal, rrmse(im_orig, im_r_op));
+
+for alpha=[0.8*alphaOptimal, min(1.2*alphaOptimal,1)]
+    [im_r, ~] = denoise(im,'d',alpha,gammaOptimal);
+    fprintf('RRMSE (alpha=%f) = %f\n', alpha, rrmse(im_orig, im_r));
+end
+
+fprintf('\n');
+
+for gamma=[0.8*gammaOptimal, 1.2*gammaOptimal]
+    [im_r, ~] = denoise(im,'d',alphaOptimal,gamma);
+    fprintf('RRMSE (gamma=%f) = %f\n', gamma, rrmse(im_orig, im_r));
+end
+
+printImage(abs(im_r_op),'Denoised image using Discontinuity-adaptive prior potential');
+figure;
+plot(nllHistory);
+title('nll function using Discontinuity-adaptive prior');
+xlabel('Iteration number');
+ylabel('nll');
+##### SOURCE END #####
+--></body></html>
