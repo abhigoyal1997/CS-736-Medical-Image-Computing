@@ -102,13 +102,7 @@ printImage(im,<span class="string">'Original phantom image - f(x,y)'</span>);
 [R,t,theta] = myRadonTrans(im,5,5,0.5);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>)
-title(<span class="string">'Radon Transform with \Deltas=0.5'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltas=0.5'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -119,18 +113,12 @@ title(<span class="string">'1D function plot with \Deltas=0.5'</span>);
 xlabel(<span class="string">'t'</span>);
 ylabel(<span class="string">'Rf(t,\theta)'</span>);
 legend(<span class="string">'\theta=0'</span>,<span class="string">'\theta=90'</span>);
-</pre><pre class="codeoutput">Elapsed time is 0.019308 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.037575 seconds.
 </pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="5">Radon transform with delta_s = 1</h2><pre class="codeinput">tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
-title(<span class="string">'Radon Transform with \Deltas=1'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltas=1'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -141,18 +129,12 @@ title(<span class="string">'1D function plot with \Deltas=1'</span>);
 xlabel(<span class="string">'t'</span>);
 ylabel(<span class="string">'Rf(t,\theta)'</span>);
 legend(<span class="string">'\theta=0'</span>,<span class="string">'\theta=90'</span>);
-</pre><pre class="codeoutput">Elapsed time is 0.005965 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.006426 seconds.
 </pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <h2 id="6">Radon transform with delta_s = 3</h2><pre class="codeinput">tic;
 [R,t,theta] = myRadonTrans(im,5,5,3);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
-title(<span class="string">'Radon Transform with \Deltas=3'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltas=3'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -163,18 +145,12 @@ title(<span class="string">'1D function plot with \Deltas=3'</span>);
 xlabel(<span class="string">'t'</span>);
 ylabel(<span class="string">'Rf(t,\theta)'</span>);
 legend(<span class="string">'\theta=0'</span>,<span class="string">'\theta=90'</span>);
-</pre><pre class="codeoutput">Elapsed time is 0.003168 seconds.
+</pre><pre class="codeoutput">Elapsed time is 0.002382 seconds.
 </pre><img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <h2 id="7">Q1.c) Comparing the plots and images</h2><p>It can be observed that both the plot and image are roughest for delta_s = 3. This is because delta_s = 3 gives a relatively bad approximation for the integral along any line. Since here delta_s &gt; 1, the integral doesn't even sum up all the information available in the original image thus resulting in jumps in the plot and more roughness in the radon transform image. The other two values of delta_s however give nearly the same results. This could be because after a certain point, decreasing delta_s doesn't add much useful information for calculating the integral. Though it adds up pixel values at a more finer scale, the values themselves are calculated using some interpolation using pixel values already available. This may add redundancy in the radon transform but may not add much information about the function. Also using a smaller value for delta_s is slower.</p><h2 id="8">Q1.d) Parameter settings for delta_t and delta_theta</h2><pre class="codeinput">tic;
 [R,t,theta] = myRadonTrans(im,1,1,1);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
-title(<span class="string">'Radon Transform with \Deltat=1 and \Delta\theta=1'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltat=1 and \Delta\theta=1'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -190,13 +166,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
-title(<span class="string">'Radon Transform with \Deltat=5 and \Delta\theta=5'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltat=5 and \Delta\theta=5'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -212,13 +182,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,0.25,0.25,1);
 toc;
 
-figure;
-iptsetpref(<span class="string">'ImshowAxesVisible'</span>,<span class="string">'on'</span>);
-imshow(R,[],<span class="string">'Xdata'</span>,theta,<span class="string">'Ydata'</span>,t,<span class="string">'InitialMagnification'</span>,<span class="string">'fit'</span>);
-title(<span class="string">'Radon Transform with \Deltat=0.25 and \Delta\theta=0.25'</span>);
-xlabel(<span class="string">'theta'</span>);
-ylabel(<span class="string">'t'</span>);
-colormap(gca,hot), colorbar;
+printImage(R,<span class="string">'Radon Transform with \Deltat=5 and \Delta\theta=5'</span>,theta,t);
 
 figure;
 hold <span class="string">on</span>;
@@ -229,10 +193,10 @@ title(<span class="string">'1D function plot with \Deltat=0.25 and \Delta\theta=
 xlabel(<span class="string">'t'</span>);
 ylabel(<span class="string">'Rf(t,\theta)'</span>);
 legend(<span class="string">'\theta=0'</span>,<span class="string">'\theta=90'</span>);
-</pre><pre class="codeoutput">Elapsed time is 0.174559 seconds.
-Elapsed time is 0.010457 seconds.
-Elapsed time is 4.960984 seconds.
-</pre><img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_13.png" alt=""> <p>It can be observed from the above images that we get a more smoother image using a smaller value of delta_t and delta_theta. This is simply because a smaller delta_t and delta_theta gives radon transform with a finer grid or resolution i.e., decreasing delta_t and delta_theta by a factor of 4 gives us a 4 times larger image of radon transform. Similarly with a corser grid we get a transform of lower resolution. Also, using a finer grid also increases the compution time for radon transform as can be observed from the documented elapsed times. The 1D plots again show a trend similar to what we saw in Q1.c on changing delta_s. After a point, decreasing delta_t and delta_theta doesn't add much infromation to the radon transform because of the similar reasons as in Q1.c. Thus, since here we are inspecting radon transform of a discrete image, decreasing the parameters too much doesn't help much. However a finer grid will add more information to the radon transform of a continuous function and thus will be useful in real CT scanners.</p><p>Thus selection of delta_t and delta_theta depends on how much resolution is actually required for the application. The parameters should be set such that the resolution we get in the reconstructed images is just enough for the diagnosis because though using finer grid might be give resolution images, they may not be neccessary for the diagnosis. Unnecessarily decreasing these parameters will add more computation time which in real CT scanner also means a higher power consumption, higher exposure to radiation while scanning and a longer wait period for the reconstruction more delays in the diagnosis.</p><h2 id="10">Q1.e) Parameter in CT reconstruction using ART</h2><p>Size of image pixel grid should be chosen such that the resolution is just enough for the correct diagnosis. This is because though a bigger image pixel grid means higher resolution reconstructed image, it increases the need for more observations required for a reconstruction using ART. With lesser number of observations and larger image pixel grid, we may not have sufficient hyperplanes in ART to find a good enough solution. This increase in number of observations has the similar effects as that of decreasing delta_t and delta_theta (as discussed in Q1.d).</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+</pre><pre class="codeoutput">Elapsed time is 0.210963 seconds.
+Elapsed time is 0.007984 seconds.
+Elapsed time is 5.558282 seconds.
+</pre><img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_13.png" alt=""> <p>It can be observed from the above images that we get a more smoother image using a smaller value of delta_t and delta_theta. This is simply because a smaller delta_t and delta_theta gives radon transform with a finer grid or resolution i.e., decreasing delta_t and delta_theta by a factor of 4 gives us a 4 times larger image of radon transform. Similarly with a corser grid we get a transform of lower resolution. Also, using a finer grid also increases the compution time for radon transform as can be observed from the documented elapsed times. The 1D plots again show a trend similar to what we saw in Q1.c on changing delta_s. After a point, decreasing delta_t and delta_theta doesn't add much infromation to the radon transform because of the similar reasons as in Q1.c. Thus, since here we are inspecting radon transform of a discrete image, decreasing the parameters too much doesn't help much. However a finer grid will add more information to the radon transform of a continuous function and thus will be useful in real CT scanners.</p><p>Thus selection of delta_t and delta_theta depends on how much resolution is actually required for the application. The parameters should be set such that the resolution we get in the reconstructed images is just enough for the diagnosis because though using finer grid might be give resolution images, they may not be neccessary for the diagnosis. Unnecessarily decreasing these parameters will add more computation time which in real CT scanner also means a higher power consumption, higher exposure to radiation while scanning and a longer wait period for the reconstruction more delays in the diagnosis.</p><h2 id="10">Q1.e) Parameter in CT reconstruction using ART</h2><p>Size of image pixel grid should be chosen such that the resolution is just enough for the correct diagnosis. This is because though a bigger image pixel grid means higher resolution reconstructed image, it increases the need for more observations required for a reconstruction using ART. With lesser number of observations and larger image pixel grid, we may not have sufficient hyperplanes in ART to find a good enough solution. This increase in number of observations has the similar effects as that of decreasing delta_t and delta_theta (as discussed in Q1.d).</p><p>As for delta_s, choosing a delta_s &gt;&gt; 1 means A matrix is very sparse because in each row there will be very few non-zero elements. This might have similar effect as that of choosing a very coarse image pixel grid (because many pixels in each integral will contribute 0 due to zeros entries in the corresponding row of A). Thus this may result in unsufficient information for the diagnosis. Also, this may not make full use of the CT data available. On the other havd choosing delta_s &lt;&lt; 1 will not affect the reconstructed image much because in the end the this just may lead to slightly different weights for different pixels in the image (because image pixel grid is fixed). However this will add to the computation cost of image reconstruction. Thus choosing a delta_s close to 1 should be the best way of reconstructing the image.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Generating and Visualizing the Shepp-Logan phantom image
 
@@ -272,13 +236,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,0.5);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit')
-title('Radon Transform with \Deltas=0.5');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=0.5',theta,t);
 
 figure;
 hold on;
@@ -295,13 +253,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltas=1');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=1',theta,t);
 
 figure;
 hold on;
@@ -318,13 +270,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,3);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltas=3');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=3',theta,t);
 
 figure;
 hold on;
@@ -357,13 +303,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,1,1,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=1 and \Delta\theta=1');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=1 and \Delta\theta=1',theta,t);
 
 figure;
 hold on;
@@ -379,13 +319,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=5 and \Delta\theta=5');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=5 and \Delta\theta=5',theta,t);
 
 figure;
 hold on;
@@ -401,13 +335,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,0.25,0.25,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=0.25 and \Delta\theta=0.25');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=5 and \Delta\theta=5',theta,t);
 
 figure;
 hold on;
@@ -455,5 +383,18 @@ legend('\theta=0','\theta=90');
 % grid, we may not have sufficient hyperplanes in ART to find a good enough
 % solution. This increase in number of observations has the similar effects
 % as that of decreasing delta_t and delta_theta (as discussed in Q1.d).
+%
+% As for delta_s, choosing a delta_s >> 1 means A matrix is very sparse
+% because in each row there will be very few non-zero elements. This might
+% have similar effect as that of choosing a very coarse image pixel grid
+% (because many pixels in each integral will contribute 0 due to zeros
+% entries in the corresponding row of A). Thus this may result in
+% unsufficient information for the diagnosis. Also, this may not make full
+% use of the CT data available. On the other havd choosing delta_s << 1
+% will not affect the reconstructed image much because in the end the this
+% just may lead to slightly different weights for different pixels in the
+% image (because image pixel grid is fixed). However this will add to the
+% computation cost of image reconstruction. Thus choosing a delta_s close
+% to 1 should be the best way of reconstructing the image.
 ##### SOURCE END #####
 --></body></html>

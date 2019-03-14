@@ -1,12 +1,18 @@
-function printImage(im, header)
+function printImage(im, header, theta, t)
 
-figure; imagesc(im);
-daspect([1 1 1]);
-axis tight;
-colormap('gray');
-if (nargin>1) && ~isempty(header)
-    title(header);
+figure;
+if nargin == 4
+    iptsetpref('ImshowAxesVisible','on');
+    imshow(im,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit')
+    xlabel('theta');
+    ylabel('t');
+else
+    imshow(im,[],'InitialMagnification','fit')
 end
+
+axis('square');
+title(header);
+colormap(gca,hot), colorbar;
 
 end
 

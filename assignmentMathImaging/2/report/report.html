@@ -1,0 +1,322 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-03-03"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Generating and Visualizing the Shepp-Logan phantom image</a></li><li><a href="#2">Q2.a) Visualising radon transform, backprojection</a></li><li><a href="#3">Q2.a) Implementation of filters using Fast Fourier Transforms</a></li><li><a href="#4">Q2.a) filtered backprojection using different filters</a></li><li><a href="#6">Q2.b) Reconstruction of blurred version of Shepp-Logan Phantom</a></li><li><a href="#8">Q1.c) Plotting RRMSE vs L</a></li></ul></div><h2 id="1">Generating and Visualizing the Shepp-Logan phantom image</h2><pre class="codeinput">sz = 256;
+im = phantom(sz);
+
+printImage(im,<span class="string">'Original phantom image - f(x,y)'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <h2 id="2">Q2.a) Visualising radon transform, backprojection</h2><pre class="codeinput">theta = 0:3:177;
+
+<span class="comment">% radon transform</span>
+[R,t] = radon(im,theta);
+printImage(R,<span class="string">'Radon Transform'</span>,theta,t);
+
+<span class="comment">% unfiltered backprojection</span>
+imr = iradon(R,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz);
+printImage(imr,<span class="string">'Unfiltered backprojection'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <h2 id="3">Q2.a) Implementation of filters using Fast Fourier Transforms</h2><pre class="language-matlab">
+<span class="keyword">function</span> [Rf,Aw] = myFilter(R,t,filter,L)
+
+    <span class="keyword">function</span> Cw = C(w,L)
+        <span class="keyword">if</span> strcmp(filter,<span class="string">'ram-lak'</span>)
+            Cw = ones(size(w));
+        <span class="keyword">elseif</span> strcmp(filter,<span class="string">'shepp-logan'</span>)
+            Cw = sinc(0.5*w/L);
+        <span class="keyword">else</span>
+            Cw = cos(0.5*pi*w/L);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    FR = fft(R,[],1);
+    w = linspace(-1,1,length(t))';
+    L = L*max(w);
+    w_abs = abs(w);
+    Aw = w_abs.*C(w,L);
+    Aw(w_abs &gt; L) = 0;
+    Aws = circshift(Aw,[floor(length(Aw)/2) 0]);
+    Rf = real(ifft(Aws.*FR,[],1));
+<span class="keyword">end</span>
+
+
+</pre><h2 id="4">Q2.a) filtered backprojection using different filters</h2><pre class="codeinput">filter.name = {<span class="string">'ram-lak'</span>,<span class="string">'shepp-logan'</span>,<span class="string">'cosine'</span>};
+filter.value = {[],[],[]};
+<span class="keyword">for</span> i=1:length(filter.name)
+    <span class="keyword">for</span> L=[1 0.5]
+        [Rf,filter.value{i}] = myFilter(R,t,filter.name{i},L);
+        imr = iradon(Rf,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz)/2;
+        printImage(imr,sprintf(<span class="string">'Backprojection using %s filter with L=%.1f'</span>,filter.name{i},L));
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <p>For all of the 3 filters, the reconstructed image with L = w_max/2 is smoother than the other. This is because L = w_max/2 eliminates the frequencies which are relatively too high making the image smoother. Across the filters, Ram-Lak filter is roughest and Cosine is smoothest among all. Though Shepp-Logan is smoother than Ram-Lak, this difference is not much visible when L=w_max/2. This could be because for smaller values of w, sinc(0.5*w/L) is close to one and so the scaling factor is close to that of Ram-Lak filter (can be seen in the plot below). Since this is not the case with cos(0.5*pi*w/L), the reconstructed image from Cosine filter is different and smoother than the others even for L=w_max/2.</p><pre class="codeinput">w = t;
+figure;
+hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:length(filter.name)
+    plot(w,filter.value{i});
+<span class="keyword">end</span>
+title(<span class="string">'Plot for the filters'</span>);
+xlabel(<span class="string">'w'</span>);
+ylabel(<span class="string">'A(w)'</span>);
+legend(<span class="string">'Ram-Lak filter'</span>,<span class="string">'Shepp-Logan filter'</span>,<span class="string">'Cosine filter'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <h2 id="6">Q2.b) Reconstruction of blurred version of Shepp-Logan Phantom</h2><pre class="codeinput">printImage(im, <span class="string">'Original image'</span>)
+
+R = radon(im,theta);
+[Rf, ~] = myFilter(R,t,<span class="string">'ram-lak'</span>,1);
+imr = iradon(Rf,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz)/2;
+printImage(imr,<span class="string">'Reconstruction of original image'</span>);
+fprintf(<span class="string">'RRMSE for reconstruction of original image = %f\n'</span>,rrmse(im,imr));
+
+sigma = [1 5];
+ksize = [11 51];
+
+<span class="keyword">for</span> i=1:length(sigma)
+    mask = fspecial(<span class="string">'gaussian'</span>,ksize(i),sigma(i));
+    imb = conv2(im, mask, <span class="string">'same'</span>);
+    printImage(imb, sprintf(<span class="string">'Blurred with sigma=%.1f'</span>,sigma(i)));
+
+    R = radon(imb,theta);
+    [Rf, ~] = myFilter(R,t,<span class="string">'ram-lak'</span>,1);
+    imr = iradon(Rf,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz)/2;
+    printImage(imr, sprintf(<span class="string">'Reconstruction of image with sigma=%.1f'</span>,sigma(i)));
+    fprintf(<span class="string">'RRMSE for reconstruction of original image = %f\n'</span>,rrmse(imb,imr));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">RRMSE for reconstruction of original image = 0.488816
+RRMSE for reconstruction of original image = 0.436148
+RRMSE for reconstruction of original image = 0.373521
+</pre><img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_13.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_14.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_15.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_16.png" alt=""> <p>As shown above, RRMSE decreases as we increase sigma for gaussian filter. This can also be verified from the above reconstructed images as the reconstruction for image when blurred using gaussian with sigma=5 is nearly the same as the original blurred image. This could be because with higher sigma, the image is more smooth which means less higher frequencies in the Fourier transform. Since Ram-Lak filter boosts the higher frequency components in the Fourier transform, this boosting is less when image is smoother thus resuting in lesser artifacts from back projection which gives lesser RRMSE.</p><h2 id="8">Q1.c) Plotting RRMSE vs L</h2><pre class="codeinput">n = floor(length(t)/2);
+history = zeros(3,n);
+
+R = radon(im,theta);
+<span class="keyword">for</span> i=1:n
+    [Rf, ~] = myFilter(R,t,<span class="string">'ram-lak'</span>,i/n);
+    imr = iradon(Rf,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz)/2;
+    history(1,i) = rrmse(im,imr);
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> i=1:length(sigma)
+    mask = fspecial(<span class="string">'gaussian'</span>,ksize(i),sigma(i));
+    imb = conv2(im, mask, <span class="string">'same'</span>);
+
+    R = radon(imb,theta);
+    <span class="keyword">for</span> j=1:n
+        [Rf, ~] = myFilter(R,t,<span class="string">'ram-lak'</span>,j/n);
+        imr = iradon(Rf,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,sz)/2;
+        history(1+i,j) = rrmse(imb,imr);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+figure;
+hold <span class="string">on</span>;
+<span class="keyword">for</span> i=1:3
+    plot(1:n,history(i,:));
+<span class="keyword">end</span>
+title(<span class="string">'RRMSE vs L'</span>);
+xlabel(<span class="string">'L'</span>);
+ylabel(<span class="string">'RRMSE'</span>);
+legend(<span class="string">'Original Image'</span>,<span class="string">'sigma = 1'</span>,<span class="string">'sigma = 5'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_17.png" alt=""> <p>The above plot also shows the trend similar to what we observed in Q2.b i.e., for higher sigma, error is lower. For L=1 error is 1 because L=1 means Ram-Lak filter will not retain any frequencies other than 0. Also with increasing L, error decreases because the filter is able to retain more information about the radon transform. This trend is consistent with the original image but for the blurred images, error stops decreasing after some L. This is because blurring eliminates higher frequencies from the image and therefore higher L doesn't affect the radon transform data as there would be no frequencies higher than L to begin with.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Generating and Visualizing the Shepp-Logan phantom image
+
+sz = 256;
+im = phantom(sz);
+
+printImage(im,'Original phantom image - f(x,y)');
+
+%% Q2.a) Visualising radon transform, backprojection
+
+theta = 0:3:177;
+
+% radon transform
+[R,t] = radon(im,theta);
+printImage(R,'Radon Transform',theta,t);
+
+% unfiltered backprojection
+imr = iradon(R,theta,'linear','none',1,sz);
+printImage(imr,'Unfiltered backprojection');
+
+%% Q2.a) Implementation of filters using Fast Fourier Transforms
+%
+% <include>myFilter.m</include>
+
+%% Q2.a) filtered backprojection using different filters
+
+filter.name = {'ram-lak','shepp-logan','cosine'};
+filter.value = {[],[],[]};
+for i=1:length(filter.name)
+    for L=[1 0.5]
+        [Rf,filter.value{i}] = myFilter(R,t,filter.name{i},L);
+        imr = iradon(Rf,theta,'linear','none',1,sz)/2;
+        printImage(imr,sprintf('Backprojection using %s filter with L=%.1f',filter.name{i},L));
+    end
+end
+
+%%
+% For all of the 3 filters, the reconstructed image with L = w_max/2 is
+% smoother than the other. This is because L = w_max/2 eliminates the
+% frequencies which are relatively too high making the image smoother.
+% Across the filters, Ram-Lak filter is roughest and Cosine is smoothest
+% among all. Though Shepp-Logan is smoother than Ram-Lak, this difference
+% is not much visible when L=w_max/2. This could be because for smaller
+% values of w, sinc(0.5*w/L) is close to one and so the scaling factor is 
+% close to that of Ram-Lak filter (can be seen in the plot below). Since 
+% this is not the case with cos(0.5*pi*w/L), the reconstructed image from
+% Cosine filter is different and smoother than the others even for L=w_max/2.
+
+w = t;
+figure;
+hold on;
+for i=1:length(filter.name)
+    plot(w,filter.value{i});
+end
+title('Plot for the filters');
+xlabel('w');
+ylabel('A(w)');
+legend('Ram-Lak filter','Shepp-Logan filter','Cosine filter');
+
+%% Q2.b) Reconstruction of blurred version of Shepp-Logan Phantom
+
+printImage(im, 'Original image')
+
+R = radon(im,theta);
+[Rf, ~] = myFilter(R,t,'ram-lak',1);
+imr = iradon(Rf,theta,'linear','none',1,sz)/2;
+printImage(imr,'Reconstruction of original image');
+fprintf('RRMSE for reconstruction of original image = %f\n',rrmse(im,imr));
+
+sigma = [1 5];
+ksize = [11 51];
+
+for i=1:length(sigma)
+    mask = fspecial('gaussian',ksize(i),sigma(i));
+    imb = conv2(im, mask, 'same');
+    printImage(imb, sprintf('Blurred with sigma=%.1f',sigma(i)));
+
+    R = radon(imb,theta);
+    [Rf, ~] = myFilter(R,t,'ram-lak',1);
+    imr = iradon(Rf,theta,'linear','none',1,sz)/2;
+    printImage(imr, sprintf('Reconstruction of image with sigma=%.1f',sigma(i)));
+    fprintf('RRMSE for reconstruction of original image = %f\n',rrmse(imb,imr));
+end
+
+%%
+% As shown above, RRMSE decreases as we increase sigma for gaussian filter.
+% This can also be verified from the above reconstructed images as the
+% reconstruction for image when blurred using gaussian with sigma=5 is
+% nearly the same as the original blurred image. This could be because with
+% higher sigma, the image is more smooth which means less higher
+% frequencies in the Fourier transform. Since Ram-Lak filter boosts the
+% higher frequency components in the Fourier transform, this boosting is
+% less when image is smoother thus resuting in lesser artifacts from back
+% projection which gives lesser RRMSE.
+
+%% Q1.c) Plotting RRMSE vs L
+
+n = floor(length(t)/2);
+history = zeros(3,n);
+
+R = radon(im,theta);
+for i=1:n
+    [Rf, ~] = myFilter(R,t,'ram-lak',i/n);
+    imr = iradon(Rf,theta,'linear','none',1,sz)/2;
+    history(1,i) = rrmse(im,imr);
+end
+
+for i=1:length(sigma)
+    mask = fspecial('gaussian',ksize(i),sigma(i));
+    imb = conv2(im, mask, 'same');
+
+    R = radon(imb,theta);
+    for j=1:n
+        [Rf, ~] = myFilter(R,t,'ram-lak',j/n);
+        imr = iradon(Rf,theta,'linear','none',1,sz)/2;
+        history(1+i,j) = rrmse(imb,imr);
+    end
+end
+
+figure;
+hold on;
+for i=1:3
+    plot(1:n,history(i,:));
+end
+title('RRMSE vs L');
+xlabel('L');
+ylabel('RRMSE');
+legend('Original Image','sigma = 1','sigma = 5');
+
+%%
+% The above plot also shows the trend similar to what we observed in Q2.b
+% i.e., for higher sigma, error is lower. For L=1 error is 1 because L=1 
+% means Ram-Lak filter will not retain any frequencies other than 0. Also 
+% with increasing L, error decreases because the filter is able to retain
+% more information about the radon transform. This trend is consistent with
+% the original image but for the blurred images, error stops decreasing
+% after some L. This is because blurring eliminates higher frequencies from
+% the image and therefore higher L doesn't affect the radon transform data
+% as there would be no frequencies higher than L to begin with.
+##### SOURCE END #####
+--></body></html>

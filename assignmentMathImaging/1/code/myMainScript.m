@@ -36,13 +36,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,0.5);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit')
-title('Radon Transform with \Deltas=0.5');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=0.5',theta,t);
 
 figure;
 hold on;
@@ -59,13 +53,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltas=1');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=1',theta,t);
 
 figure;
 hold on;
@@ -82,13 +70,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,3);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltas=3');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltas=3',theta,t);
 
 figure;
 hold on;
@@ -121,13 +103,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,1,1,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=1 and \Delta\theta=1');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=1 and \Delta\theta=1',theta,t);
 
 figure;
 hold on;
@@ -143,13 +119,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,5,5,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=5 and \Delta\theta=5');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=5 and \Delta\theta=5',theta,t);
 
 figure;
 hold on;
@@ -165,13 +135,7 @@ tic;
 [R,t,theta] = myRadonTrans(im,0.25,0.25,1);
 toc;
 
-figure;
-iptsetpref('ImshowAxesVisible','on');
-imshow(R,[],'Xdata',theta,'Ydata',t,'InitialMagnification','fit');
-title('Radon Transform with \Deltat=0.25 and \Delta\theta=0.25');
-xlabel('theta');
-ylabel('t');
-colormap(gca,hot), colorbar;
+printImage(R,'Radon Transform with \Deltat=5 and \Delta\theta=5',theta,t);
 
 figure;
 hold on;
@@ -219,3 +183,16 @@ legend('\theta=0','\theta=90');
 % grid, we may not have sufficient hyperplanes in ART to find a good enough
 % solution. This increase in number of observations has the similar effects
 % as that of decreasing delta_t and delta_theta (as discussed in Q1.d).
+%
+% As for delta_s, choosing a delta_s >> 1 means A matrix is very sparse
+% because in each row there will be very few non-zero elements. This might
+% have similar effect as that of choosing a very coarse image pixel grid
+% (because many pixels in each integral will contribute 0 due to zeros
+% entries in the corresponding row of A). Thus this may result in
+% unsufficient information for the diagnosis. Also, this may not make full
+% use of the CT data available. On the other havd choosing delta_s << 1
+% will not affect the reconstructed image much because in the end the this
+% just may lead to slightly different weights for different pixels in the
+% image (because image pixel grid is fixed). However this will add to the
+% computation cost of image reconstruction. Thus choosing a delta_s close
+% to 1 should be the best way of reconstructing the image.
