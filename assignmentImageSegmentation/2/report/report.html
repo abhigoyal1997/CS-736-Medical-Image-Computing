@@ -1,0 +1,256 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>myMainScript</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-03-20"><meta name="DC.source" content="myMainScript.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Visualizing the data</a></li><li><a href="#2">Initialisation using k-means</a></li><li><a href="#4">Segmentation</a></li></ul></div><h2 id="1">Visualizing the data</h2><pre class="codeinput">data = load(<span class="string">'../data/assignmentSegmentBrainGmmEmMrf.mat'</span>);
+im = data.imageData;
+mask = data.imageMask;
+
+printImage(im.*mask,<span class="string">'Masked corrupted image - y'</span>);
+</pre><img vspace="5" hspace="5" src="myMainScript_01.png" alt=""> <h2 id="2">Initialisation using k-means</h2><pre class="codeinput">K = 3;
+y = im(logical(mask));
+y_uniq = unique(y);
+mu_idx = randperm(length(y_uniq),K);
+mu = reshape(y_uniq(mu_idx),1,K);
+[mu,~] = kmeansClustering(y,mu,eps);
+
+[d,x] = min(((y-mu).^2),[],2);
+
+sigma = zeros(1,1,K);
+<span class="keyword">for</span> k=1:K
+    sigma(k) = sqrt(sum(d(x==k))/sum(x==k));
+<span class="keyword">end</span>
+
+mu = reshape(mu,1,1,K);
+y = im;
+y(~mask) = 0;
+[~,x] = min(((y-mu).^2).*mask,[],3);
+
+printImage(label2rgb(x).*uint8(mask), <span class="string">'Initial Labels'</span>);
+x(~mask) = 0;
+
+fprintf(<span class="string">'Initial class means = %f %f %f\n'</span>,mu);
+fprintf(<span class="string">'Initial class standard deviations = %f %f %f\n'</span>,sigma);
+</pre><pre class="codeoutput">Initial class means = 0.270111 0.628841 0.505419
+Initial class standard deviations = 0.077485 0.036704 0.044198
+</pre><img vspace="5" hspace="5" src="myMainScript_02.png" alt=""> <p>This initialization is given by kmeans clustering on masked image. Motivation for this is that kmeans is a natural and efficient algorithm for image segmentation. This gives reasonable initial labels for EM and sufficiently far apart initial means (but which are close to optimal means). The the class standard deviations are calculated using ML estimate which reduces to the emperical standard deviations in data. This is because ML estimate for standard deviation in a Gaussian distribution is same as the emperical standard deviation.</p><h2 id="4">Segmentation</h2><pre class="codeinput">printImage(im, <span class="string">'Corrupted Image'</span>);
+printImage(im.*mask, <span class="string">'Masked Corrupted Image'</span>);
+
+<span class="comment">% Masks for determining valid neighbourhood of a pixel</span>
+nbMask = zeros([size(mask),4]);
+<span class="keyword">for</span> dim=[1,2]
+    <span class="keyword">for</span> k=[-1,1]
+        nbMask(:,:,dim+k+1) = circshift(mask,k,dim);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+nbMask = nbMask.*mask;
+
+mask = repmat(mask,[1,1,K]);
+
+choosen_beta = 1.18;
+fprintf(<span class="string">'Choosen value for beta = %f\n'</span>,choosen_beta);
+
+<span class="comment">% Hyperparameter beta for smoothness of segmentation</span>
+<span class="keyword">for</span> beta=[0,choosen_beta]
+    fprintf(<span class="string">'beta = %f\n'</span>,beta);
+
+    <span class="comment">% Function handle to compute MRF prior image</span>
+    priorFn = @(x) calculatePrior(x,nbMask,beta,K);
+
+    <span class="comment">% Function handle to compute posterior image</span>
+    posteriorFn = @(y,mu,sigma,x,cx) calculatePosterior(y,mu,sigma,x,cx,priorFn,mask);
+
+    <span class="comment">% EM</span>
+    eps = 1e-7;
+    [gamma,x,mu,sigma] = emSegmentation(y,mu,sigma,x,posteriorFn,mask,eps);
+
+    printImage(gamma, sprintf(<span class="string">'Class membership image estimate for beta = %f'</span>,beta));
+    <span class="keyword">for</span> k=1:K
+        printImage(gamma(:,:,k), sprintf(<span class="string">'Membership for class %d, for beta = %f'</span>,k,beta));
+    <span class="keyword">end</span>
+    printImage((label2rgb(x).*uint8(mask)), sprintf(<span class="string">'Optimal label image estimate for beta = %f'</span>,beta));
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'Optimal class means (for beta = %f) = %f %f %f\n'</span>,choosen_beta,mu);
+</pre><pre class="codeoutput">Choosen value for beta = 1.180000
+beta = 0.000000
+ICM update - Log posterior probability: -2475.334875 --&gt; -2074.264903
+ICM update - Log posterior probability: -2715.171585 --&gt; -2561.684164
+ICM update - Log posterior probability: -2964.812413 --&gt; -2873.614498
+ICM update - Log posterior probability: -3177.415468 --&gt; -3124.135975
+ICM update - Log posterior probability: -3383.119989 --&gt; -3350.645807
+ICM update - Log posterior probability: -3565.378728 --&gt; -3542.580047
+ICM update - Log posterior probability: -3712.368828 --&gt; -3701.018090
+ICM update - Log posterior probability: -3829.483217 --&gt; -3822.924631
+ICM update - Log posterior probability: -3912.636310 --&gt; -3909.408894
+ICM update - Log posterior probability: -3969.628842 --&gt; -3968.115625
+ICM update - Log posterior probability: -4006.940447 --&gt; -4005.908777
+ICM update - Log posterior probability: -4029.790101 --&gt; -4029.272117
+ICM update - Log posterior probability: -4043.803126 --&gt; -4043.426974
+ICM update - Log posterior probability: -4052.052820 --&gt; -4051.756458
+ICM update - Log posterior probability: -4056.729655 --&gt; -4056.606717
+ICM update - Log posterior probability: -4059.519616 --&gt; -4059.444264
+beta = 1.180000
+ICM update - Log posterior probability: -4671.761667 --&gt; -957.839179
+ICM update - Log posterior probability: -1871.329097 --&gt; -829.636876
+ICM update - Log posterior probability: -1811.353301 --&gt; -798.240561
+ICM update - Log posterior probability: -1533.704710 --&gt; -790.229455
+ICM update - Log posterior probability: -1579.207982 --&gt; -784.769313
+ICM update - Log posterior probability: -1516.307304 --&gt; -786.019871
+ICM update - Log posterior probability: -1511.299002 --&gt; -784.840295
+Optimal class means (for beta = 1.180000) = 0.310309 0.635586 0.527966
+</pre><img vspace="5" hspace="5" src="myMainScript_03.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_04.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_05.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_06.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_07.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_08.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_09.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_10.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_11.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_12.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_13.png" alt=""> <img vspace="5" hspace="5" src="myMainScript_14.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Visualizing the data
+
+data = load('../data/assignmentSegmentBrainGmmEmMrf.mat');
+im = data.imageData;
+mask = data.imageMask;
+
+printImage(im.*mask,'Masked corrupted image - y');
+
+%% Initialisation using k-means
+
+K = 3;
+y = im(logical(mask));
+y_uniq = unique(y);
+mu_idx = randperm(length(y_uniq),K);
+mu = reshape(y_uniq(mu_idx),1,K);
+[mu,~] = kmeansClustering(y,mu,eps);
+
+[d,x] = min(((y-mu).^2),[],2);
+
+sigma = zeros(1,1,K);
+for k=1:K
+    sigma(k) = sqrt(sum(d(x==k))/sum(x==k));
+end
+
+mu = reshape(mu,1,1,K);
+y = im;
+y(~mask) = 0;
+[~,x] = min(((y-mu).^2).*mask,[],3);
+
+printImage(label2rgb(x).*uint8(mask), 'Initial Labels');
+x(~mask) = 0;
+
+fprintf('Initial class means = %f %f %f\n',mu);
+fprintf('Initial class standard deviations = %f %f %f\n',sigma);
+
+
+%%
+% This initialization is given by kmeans clustering on masked image.
+% Motivation for this is that kmeans is a natural and efficient algorithm
+% for image segmentation. This gives reasonable initial labels for EM and
+% sufficiently far apart initial means (but which are close to optimal
+% means). The the class standard deviations are calculated using ML
+% estimate which reduces to the emperical standard deviations in data. This
+% is because ML estimate for standard deviation in a Gaussian distribution
+% is same as the emperical standard deviation.
+
+%% Segmentation
+
+printImage(im, 'Corrupted Image');
+printImage(im.*mask, 'Masked Corrupted Image');
+
+% Masks for determining valid neighbourhood of a pixel
+nbMask = zeros([size(mask),4]);
+for dim=[1,2]
+    for k=[-1,1]
+        nbMask(:,:,dim+k+1) = circshift(mask,k,dim);
+    end
+end
+nbMask = nbMask.*mask;
+
+mask = repmat(mask,[1,1,K]);
+
+choosen_beta = 1.18;
+fprintf('Choosen value for beta = %f\n',choosen_beta);
+
+% Hyperparameter beta for smoothness of segmentation
+for beta=[0,choosen_beta]
+    fprintf('beta = %f\n',beta);
+    
+    % Function handle to compute MRF prior image
+    priorFn = @(x) calculatePrior(x,nbMask,beta,K);
+
+    % Function handle to compute posterior image
+    posteriorFn = @(y,mu,sigma,x,cx) calculatePosterior(y,mu,sigma,x,cx,priorFn,mask);
+
+    % EM
+    eps = 1e-7;
+    [gamma,x,mu,sigma] = emSegmentation(y,mu,sigma,x,posteriorFn,mask,eps);
+
+    printImage(gamma, sprintf('Class membership image estimate for beta = %f',beta));
+    for k=1:K
+        printImage(gamma(:,:,k), sprintf('Membership for class %d, for beta = %f',k,beta));
+    end
+    printImage((label2rgb(x).*uint8(mask)), sprintf('Optimal label image estimate for beta = %f',beta));
+end
+
+fprintf('Optimal class means (for beta = %f) = %f %f %f\n',choosen_beta,mu);
+##### SOURCE END #####
+--></body></html>
